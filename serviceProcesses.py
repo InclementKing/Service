@@ -48,7 +48,7 @@ def logout():
 
 def login(username):
 	if os.path.exists(sLog):
-		logout()S
+		logout()
 		nowLoggedIn = open(sLog, 'w')
 		nowLoggedIn.write(username)
 		nowLoggedIn.close()
