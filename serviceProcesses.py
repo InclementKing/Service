@@ -1,5 +1,5 @@
 import os, shutil
-sData = "/Users/benrohrs/Documents/Service/"
+sData = "~/Service/"
 sUsers = sData + "Users/"
 sPass = sData + "Passwords/"
 sLog = sData + "loggedIn"

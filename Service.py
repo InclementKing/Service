@@ -1,8 +1,5 @@
-import sys, time
-sys.path.append("/Users/benrohrs/Desktop/Python")
-
+import time
 import serviceProcesses as service
-
 
 
 def introText():
