@@ -4,18 +4,21 @@ import serviceProcesses as service
 
 def introText():
 	print('\nWhat would you like to do today?')
-	print('  1. Manage accounts')
-	print('  2. Log in')
-	print('  3. End')
+
+	options = ['1. Manage accounts', '2. Log in', '3. End']
+	for i in options:
+		print('  ' + i)
 	return input('> ')
 
 def manage():
-	options = ['Create', 'Remove', 'Change']
 	print('\nWhat action would you like to perform?')
-	for i in options:
-		print('')
 
-	return input('> ')
+	options = ['1. Create', '2. Remove', '3. Change']
+	for i in options:
+		print('  ' + i + ' an account.')
+
+	choice = input('> ')
+			
 
 def Create():
 	username = input('What would you like your username to be? ')
@@ -47,7 +50,7 @@ while 1:
 			elif status == 0:
 				print('Please try again.\n')
 
-		elif menuStatus == '2':
+		elif menuStatus == '':
 			status = Remove()
 
 			if status == 1:
