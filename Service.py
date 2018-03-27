@@ -18,7 +18,6 @@ def manage():
 		print('  ' + i + ' an account.')
 
 	choice = input('> ')
-			
 
 def Create():
 	username = input('What would you like your username to be? ')
