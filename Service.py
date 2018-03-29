@@ -17,7 +17,7 @@ def manage():
 	for i in options:
 		print('  ' + i + ' an account.')
 
-	choice = input('> ')
+	return input('> ')
 
 def Create():
 	username = input('What would you like your username to be? ')
