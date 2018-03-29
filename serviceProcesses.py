@@ -1,5 +1,5 @@
 import os, shutil
-sData = os.path.expanduser('~/Service/')
+sData = os.path.expanduser('~/.Service/')
 sUsers = sData + 'Users/'
 sPass = sData + 'Passwords/'
 sLog = sData + 'loggedIn'
