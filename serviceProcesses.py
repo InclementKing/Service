@@ -34,6 +34,7 @@ def Create(username, password):
 	elif username == 'All':
 		print('That username is not allowed.')
 		return 0
+		pass
 
 	else:
 		os.makedirs(usrPath)
