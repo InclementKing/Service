@@ -1,4 +1,3 @@
-import time
 import serviceProcesses as service
 
 
@@ -19,71 +18,34 @@ def manage():
 
 	return input('> ')
 
-def Create():
-	username = input('What would you like your username to be? ')
-	password = input('What would you like your password to be? ')
-	return service.Create(username, password)
+def successChecker(returnCode):
+	if returnCode == 1:
+		pass
 
-def Login():
-	return service.Login()
+	elif status == 0:
+		print('Please try again.\n')
 
-def Remove():
-	toRemove = input('What account would you like to remove? ')
-	return service.Remove(toRemove)
-
-def changePass():
-	return service.changePass()
-
-
+	else:
+		print('Something has gone horribly wrong. Unrecognized return code.')
 
 while 1:
 	choice = introText()
 	if choice == '1':
 		menuStatus = manage()
 		if menuStatus == '1':
-			status = Create()
-
-			if status == 1:
-				pass
-
-			elif status == 0:
-				print('Please try again.\n')
+			successChecker(service.Create())
 
 		elif menuStatus == '':
-			status = Remove()
-
-			if status == 1:
-				pass
-
-			elif status == 0:
-				print('Please try again.\n')
-
-			else:
-				print('Error.')
+			successChecker(service.Remove())
 
 		elif menuStatus == '3':
-			status = changePass()
-
-			if status == 1:
-				pass
-
-			elif status == 0:
-				print('Please try again.\n')
+			successChecker(service.changePass())
 
 		else:
 			print('Please enter a valid option.')
 
 	elif choice == '2':
-		status = Login()
-
-		if status == 1:
-			pass
-
-		elif status == 0:
-			print('Please try again.\n')
-
-		else:
-			print('Error.')
+		successChecker(service.Login())
 
 	elif choice == '3':
 		print('Finished.\n')
@@ -91,5 +53,3 @@ while 1:
 
 	else:
 		print('Please enter a valid option.')
-
-	time.sleep(1)

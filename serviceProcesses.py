@@ -24,7 +24,9 @@ def startup():
 		benPass.write('pass')
 		benPass.close()
 
-def Create(username, password):
+def Create():
+	username = input('What would you like your username to be? ')
+	password = input('What would you like your password to be? ')
 	usrPath = sUsers + username + '/'
 
 	if os.path.exists(usrPath):
@@ -60,7 +62,7 @@ def login(username):
 		nowLoggedIn.close()
 
 def Login():
-	if os.path.exists(sLog) == True:
+	if os.path.exists(sLog):
 		logged = open(sLog, 'r')
 		loggedIn = logged.read()
 		logged.close()
@@ -69,7 +71,7 @@ def Login():
 		if sure == 'y':
 			username = input('Username: ')
 
-			if os.path.exists(sUsers + username) == True:
+			if os.path.exists(sUsers + username):
 
 				usersPassword = open(sPass + username, 'r')
 				correctPassword = usersPassword.read()
@@ -99,7 +101,7 @@ def Login():
 
 	else:
 		username = input('Username: ')
-		if os.path.exists(sUsers + username) == True:
+		if os.path.exists(sUsers + username):
 			usersPassword = open(sPass + username, 'r')
 			correctPassword = usersPassword.read()
 			usersPassword.close()
@@ -122,8 +124,9 @@ def Login():
 			return 0
 
 def Remove(username):
+	username = input("Enter the name of the account to be removed: ")
 	admin = 0
-	if os.path.exists(sLog) == True:
+	if os.path.exists(sLog):
 		logged = open(sLog, 'r')
 		loggedIn = logged.read()
 		logged.close()
@@ -139,7 +142,7 @@ def Remove(username):
 	if admin == 1:
 		if username == 'All':
 			sure = input('Are you sure you wish to remove all accounts? (y/n) ')
-			if sure == 'y':
+			if sure:
 				adminPath = sUsers + 'admin/'
 				adminPass = sPass + 'admin'
 
@@ -157,7 +160,7 @@ def Remove(username):
 				return 1
 
 		else:
-			if os.path.exists(sUsers + username) == True:
+			if os.path.exists(sUsers + username):
 				sure = input('Are you sure you wish to remove account '' + username + ''? (y/n) ')
 				if sure == 'y':
 					shutil.rmtree(sUsers + username + '/')
@@ -173,7 +176,7 @@ def Remove(username):
 		return 0
 
 	else:
-		if os.path.exists(sUsers + username) == True:
+		if os.path.exists(sUsers + username):
 			usersPassword = open(sPass + username, 'r')
 			correctPassword = usersPassword.read()
 			usersPassword.close()
