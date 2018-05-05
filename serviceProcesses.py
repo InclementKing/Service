@@ -1,90 +1,105 @@
 import os, shutil
-sData = os.path.expanduser('~/.Service/')
-sUsers = sData + 'Users/'
-sPass = sData + 'Passwords/'
-sLog = sData + 'loggedIn'
-
+sHome = os.path.expanduser('~/.Service/')
+accountsDir = sHome + 'Users/'
+passwordDir = sHome + 'Passwords/'
+currentlyLoggedIn = sHome + 'loggedIn'
 
 
 def startup():
-	if os.path.exists(sData):
+	if os.path.exists(sHome):
 		pass
 
 	else:
-		os.makedirs(sPass)
-		os.makedirs(sUsers + 'admin/')
-		os.makedirs(sUsers + 'ben/')
+		os.makedirs(passwordDir)
+		os.makedirs(accountsDir + 'admin/')
+		os.makedirs(accountsDir + 'ben/')
 
 
-		adminPass = open(sPass + 'admin', 'w')
+		adminPass = open(passwordDir + 'admin', 'w')
 		adminPass.write('password')
 		adminPass.close()
 
-		benPass = open(sPass + 'ben', 'w')
+		benPass = open(passwordDir + 'ben', 'w')
 		benPass.write('pass')
 		benPass.close()
+
+def writePassword(account, password):
+	passwordFile = open(passwordDir + account, 'w')
+	passwordFile.write(password)
+	passwordFile.close()
 
 def Create():
 	username = input('What would you like your username to be? ')
 	password = input('What would you like your password to be? ')
-	usrPath = sUsers + username + '/'
+	userPath = accountsDir + username + '/'
 
-	if os.path.exists(usrPath):
+	if os.path.exists(userPath):
 		print('An account already exists under that username.')
+
 		return 0
 
 	elif username == 'All':
 		print('That username is not allowed.')
+
 		return 0
-		pass
 
 	else:
-		os.makedirs(usrPath)
-		passwordFile = open(sPass + username, 'w')
-		passwordFile.write(password)
-		passwordFile.close()
+		os.makedirs(userPath)
+		writePassword(username, password)
 		print('Account created successfully.')
+
 		return 1
 
 def logout():
-	os.remove(sLog)
+	os.remove(currentlyLoggedIn)
+
+def getCurrentlyLoggedIn():
+	loggedInFile = open(currentlyLoggedIn, 'r')
+	loggedIn = loggedInFile.read()
+	loggedInFile.close()
+
+	return loggedIn
+
+def getAccountPassword(account):
+	accountPasswordFile = open(passwordDir + account, 'r')
+	accountPassword = accountPasswordFile.read()
+	accountPasswordFile.close()
+
+	return accountPassword
 
 def login(username):
-	if os.path.exists(sLog):
+	if os.path.exists(currentlyLoggedIn):
 		logout()
-		nowLoggedIn = open(sLog, 'w')
+		nowLoggedIn = open(currentlyLoggedIn, 'w')
 		nowLoggedIn.write(username)
 		nowLoggedIn.close()
 
 	else:
-		nowLoggedIn = open(sLog, 'w')
+		nowLoggedIn = open(currentlyLoggedIn, 'w')
 		nowLoggedIn.write(username)
 		nowLoggedIn.close()
 
 def Login():
-	if os.path.exists(sLog):
-		logged = open(sLog, 'r')
-		loggedIn = logged.read()
-		logged.close()
-
+	if os.path.exists(currentlyLoggedIn):
+		loggedIn = getCurrentlyLoggedIn()
 		sure = input(loggedIn + ' is currently logged in. Do you wish to login under a different account? (y/n) ')
+
 		if sure == 'y':
-			username = input('Username: ')
+			account = input('Username: ')
 
-			if os.path.exists(sUsers + username):
+			if os.path.exists(accountsDir + account):
+				correctPassword = getAccountPassword(account)
+				passwordAttempt = input('Password: ')
 
-				usersPassword = open(sPass + username, 'r')
-				correctPassword = usersPassword.read()
-				usersPassword.close()
+				if passwordAttempt == correctPassword:
+					login(account)
+					print('Successfully logged in.')
 
-				passwrd = input('Password: ')
-
-				if passwrd == correctPassword:
-					login(username)
 					return 1
 
 				else:
 					print('Incorrect password.')
+
 					return 0
 
 			else:
@@ -92,131 +107,132 @@ def Login():
 				return 0
 
 		elif sure == 'n':
-			print('Remained logged in under account '' + loggedIn + ''')
+			print('Remained logged in under account ' + loggedIn + '.')
+
 			return 1
 
 		else:
 			print('Please enter either y or n.')
+
 			return 0
 
 	else:
-		username = input('Username: ')
-		if os.path.exists(sUsers + username):
-			usersPassword = open(sPass + username, 'r')
-			correctPassword = usersPassword.read()
-			usersPassword.close()
+		account = input('Username: ')
 
-			passwrd = input('Password: ')
+		if os.path.exists(accountsDir + account):
+			correctPassword = getAccountPassword(account)
+			passwordAttempt = input('Password: ')
 
-			if passwrd == correctPassword:
-				nowLoggedIn = open(sLog, 'w')
-				nowLoggedIn.write(username)
-				nowLoggedIn.close()
-
+			if passwordAttempt == correctPassword:
+				login(account)
 				print('Successfully logged in.')
+
 				return 1
 
 			else:
 				print('Incorrect password.')
+
 				return 0
 		else:
 			print('There is no account under that username.')
+
 			return 0
 
-def Remove(username):
-	username = input("Enter the name of the account to be removed: ")
+def Remove():
+	#TODO: Fix 'if admin is logged in' choice process
+	accountToRemove = input("Enter the name of the account to be removed: ")
 	admin = 0
-	if os.path.exists(sLog):
-		logged = open(sLog, 'r')
-		loggedIn = logged.read()
-		logged.close()
+	if os.path.exists(currentlyLoggedIn):
+		loggedIn = getCurrentlyLoggedIn()
 
 		if loggedIn == 'admin':
 			admin = 1
 
-		else:
-			pass
-	else:
-		pass
-
-	if admin == 1:
-		if username == 'All':
+	if accountToRemove == 'All':
+		if admin == 1:
 			sure = input('Are you sure you wish to remove all accounts? (y/n) ')
 			if sure:
-				adminPath = sUsers + 'admin/'
-				adminPass = sPass + 'admin'
-
-				shutil.rmtree(sUsers)
-				shutil.rmtree(sPass)
-				os.makedirs(sUsers)
-				os.makedirs(sPass)
-
-				os.makedirs(adminPath)
-				passwordFile = open(adminPass, 'w')
-				passwordFile.write('password')
-				passwordFile.close()
+				shutil.rmtree(sHome)
+				startup()
 
 				print('All accounts succesfully removed.')
+
 				return 1
 
-		else:
-			if os.path.exists(sUsers + username):
-				sure = input('Are you sure you wish to remove account '' + username + ''? (y/n) ')
-				if sure == 'y':
-					shutil.rmtree(sUsers + username + '/')
-					os.remove(sPass + username)
-					print('Account removed successfully.')
-					return 1
-				else:
-					print('Account not removed.')
-					return 0
+			else:
+				print('No accounts deleted.')
 
-	elif username == 'admin':
+		else:
+			print('Must be admin to remove all accounts.')
+
+	else:
+		if os.path.exists(accountsDir + accountToRemove):
+			sure = input('Are you sure you wish to remove account '' + username + ''? (y/n) ')
+
+			if sure == 'y':
+				shutil.rmtree(accountsDir + accountToRemove + '/')
+				os.remove(passwordDir + accountToRemove)
+				print('Account removed successfully.')
+
+				return 1
+
+			else:
+				print('Account not removed.')
+
+				return 0
+
+	elif accountToRemove == 'admin':
 		print('That account cannot be removed.')
+
 		return 0
 
 	else:
-		if os.path.exists(sUsers + username):
-			usersPassword = open(sPass + username, 'r')
-			correctPassword = usersPassword.read()
-			usersPassword.close()
+		if os.path.exists(accountsDir + accountToRemove):
+			correctPassword = getAccountPassword(accountToRemove)
+			passwordAttempt = input('Password: ')
 
-			passwrd = input('Password: ')
-
-			if passwrd == correctPassword:
+			if passwordAttempt == correctPassword:
 				sure = input('This will remove the account '' + username + '' and all associated data. Continue? (y/n) ')
+
 				if sure == 'y':
-					shutil.rmtree(sUsers + username + '/')
-					os.remove(sPass + username)
+					shutil.rmtree(accountsDir + accountToRemove + '/')
+					os.remove(passwordDir + accountToRemove)
 					print('Account removed successfully.')
+
 					return 1
+
 				else:
 					print('Account not removed.')
+
 					return 0
+
 			else:
 				print('Incorrect password.')
+
 				return 0
+
 		else:
 			print('There is no account under that username.')
+
 			return 0
 
 def changePass():
-	username = input('Username: ')
-	usrPath = sUsers + username + '/' 
+	account = input('Username: ')
+	accountPath = accountsDir + account + '/' 
 
-	if os.path.exists(usrPath):
-		newPass = input('New password: ')
-		os.remove(sPass + username)
+	if os.path.exists(userPath):
+		newPassword = input('New password: ')
+		os.remove(passwordDir + account)
 
-		passwordFile = open(sPass + username, 'w')
-		passwordFile.write(newPass)
-		passwordFile.close()
+		writePassword(account, newPassword)
 
 		print('Password changed successfully.')
+
 		return 1
 
 	else:
 		print('No account under that username.')
+		
 		return 0
 
 startup()
