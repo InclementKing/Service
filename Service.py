@@ -13,9 +13,14 @@ def introText():
 def manage():
 	print('\nWhat action would you like to perform?')
 
-	options = ['1. Create', '2. Remove', '3. Change']
+	options = ['1. Create', '2. Remove', '3. Change', '4. Return to main menu']
 	for i in options:
-		print('  ' + i + ' an account.')
+		if i == '3. Change':
+			print('  ' + i + ' an account password.')
+		elif i == '4. Return to main menu':
+			print('  ' + i)
+		else:
+			print('  ' + i + ' an account.')
 
 	return input('> ')
 
@@ -42,6 +47,9 @@ while 1:
 
 		elif menuChoice == '3':
 			successChecker(service.changePass())
+
+		elif menuChoice == '4':
+			pass
 
 		else:
 			print('Please enter a valid option.')

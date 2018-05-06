@@ -104,6 +104,7 @@ def Login():
 
 			else:
 				print('There is no account under that username.')
+
 				return 0
 
 		elif sure == 'n':
@@ -138,18 +139,26 @@ def Login():
 
 			return 0
 
+def remove(account):
+	shutil.rmtree(accountsDir + account + '/')
+	os.remove(passwordDir + account)
+
 def Remove():
-	#TODO: Fix 'if admin is logged in' choice process
-	accountToRemove = input("Enter the name of the account to be removed: ")
-	admin = 0
+	admin = False
 	if os.path.exists(currentlyLoggedIn):
 		loggedIn = getCurrentlyLoggedIn()
 
 		if loggedIn == 'admin':
-			admin = 1
+			print('\nAs admin, you have a few extra powers.')
+			print('Removing accounts only requires the admin password,')
+			print("and you can remove all acounts with the keyword 'All'.")
+			print('Make sure to use this power responsibly.\n')
+			admin = True
+
+	accountToRemove = input("Enter the name of the account to be removed: ")
 
 	if accountToRemove == 'All':
-		if admin == 1:
+		if admin == True:
 			sure = input('Are you sure you wish to remove all accounts? (y/n) ')
 			if sure:
 				shutil.rmtree(sHome)
@@ -165,46 +174,25 @@ def Remove():
 		else:
 			print('Must be admin to remove all accounts.')
 
-	else:
-		if os.path.exists(accountsDir + accountToRemove):
-			sure = input('Are you sure you wish to remove account '' + username + ''? (y/n) ')
-
-			if sure == 'y':
-				shutil.rmtree(accountsDir + accountToRemove + '/')
-				os.remove(passwordDir + accountToRemove)
-				print('Account removed successfully.')
-
-				return 1
-
-			else:
-				print('Account not removed.')
-
-				return 0
-
 	elif accountToRemove == 'admin':
 		print('That account cannot be removed.')
 
 		return 0
 
-	else:
-		if os.path.exists(accountsDir + accountToRemove):
-			correctPassword = getAccountPassword(accountToRemove)
-			passwordAttempt = input('Password: ')
+	elif os.path.exists(accountsDir + accountToRemove):
+		loggedIn = getCurrentlyLoggedIn()
 
-			if passwordAttempt == correctPassword:
-				sure = input('This will remove the account '' + username + '' and all associated data. Continue? (y/n) ')
+		if admin == True:
+			adminPassword = getAccountPassword('admin')
+			passwordAttempt = input('Enter the admin password: ')
 
-				if sure == 'y':
-					shutil.rmtree(accountsDir + accountToRemove + '/')
-					os.remove(passwordDir + accountToRemove)
-					print('Account removed successfully.')
+			if passwordAttempt == adminPassword:
+				remove(accountToRemove)
+				if loggedIn == accountToRemove:
+					logout()
+				print('Account successfully removed.')
 
-					return 1
-
-				else:
-					print('Account not removed.')
-
-					return 0
+				return 1
 
 			else:
 				print('Incorrect password.')
@@ -212,15 +200,41 @@ def Remove():
 				return 0
 
 		else:
-			print('There is no account under that username.')
+			correctPassword = getAccountPassword(accountToRemove)
+			passwordAttempt = input('Password: ')
 
-			return 0
+			if passwordAttempt == correctPassword:
+				sure = input('This will remove the account ' + accountToRemove + ' and all associated data. Continue? (y/n) ')
+
+				if sure == 'y':
+					remove(accountToRemove)
+					if loggedIn == accountToRemove:
+						logout()
+					print('Account removed successfully.')
+
+					return 1
+
+				else:
+					print('Account not removed.')
+
+					return 1
+
+			else:
+				print('Incorrect password.')
+
+				return 0
+
+	
+	else:
+		print('There is no account under that username.')
+
+		return 0
 
 def changePass():
 	account = input('Username: ')
 	accountPath = accountsDir + account + '/' 
 
-	if os.path.exists(userPath):
+	if os.path.exists(accountPath):
 		newPassword = input('New password: ')
 		os.remove(passwordDir + account)
 
