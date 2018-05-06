@@ -46,7 +46,7 @@ while 1:
 			successChecker(service.Remove())
 
 		elif menuChoice == '3':
-			successChecker(service.changePass())
+			successChecker(service.ChangePass())
 
 		elif menuChoice == '4':
 			pass

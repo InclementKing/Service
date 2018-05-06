@@ -5,6 +5,11 @@ passwordDir = sHome + 'Passwords/'
 currentlyLoggedIn = sHome + 'loggedIn'
 
 
+def writePassword(account, password):
+	passwordFile = open(passwordDir + account, 'w')
+	passwordFile.write(password)
+	passwordFile.close()
+
 def startup():
 	if os.path.exists(sHome):
 		pass
@@ -12,21 +17,43 @@ def startup():
 	else:
 		os.makedirs(passwordDir)
 		os.makedirs(accountsDir + 'admin/')
-		os.makedirs(accountsDir + 'ben/')
+
+		writePassword(admin, 'password')
+
+def getCurrentlyLoggedIn():
+	loggedInFile = open(currentlyLoggedIn, 'r')
+	loggedIn = loggedInFile.read()
+	loggedInFile.close()
+
+	return loggedIn
+
+def getAccountPassword(account):
+	accountPasswordFile = open(passwordDir + account, 'r')
+	accountPassword = accountPasswordFile.read()
+	accountPasswordFile.close()
+
+	return accountPassword
+
+def logout():
+	os.remove(currentlyLoggedIn)
+
+def login(username):
+	if os.path.exists(currentlyLoggedIn):
+		logout()
+		nowLoggedIn = open(currentlyLoggedIn, 'w')
+		nowLoggedIn.write(username)
+		nowLoggedIn.close()
+
+	else:
+		nowLoggedIn = open(currentlyLoggedIn, 'w')
+		nowLoggedIn.write(username)
+		nowLoggedIn.close()
+
+def remove(account):
+	shutil.rmtree(accountsDir + account + '/')
+	os.remove(passwordDir + account)
 
 
-		adminPass = open(passwordDir + 'admin', 'w')
-		adminPass.write('password')
-		adminPass.close()
-
-		benPass = open(passwordDir + 'ben', 'w')
-		benPass.write('pass')
-		benPass.close()
-
-def writePassword(account, password):
-	passwordFile = open(passwordDir + account, 'w')
-	passwordFile.write(password)
-	passwordFile.close()
 
 def Create():
 	username = input('What would you like your username to be? ')
@@ -49,35 +76,6 @@ def Create():
 		print('Account created successfully.')
 
 		return 1
-
-def logout():
-	os.remove(currentlyLoggedIn)
-
-def getCurrentlyLoggedIn():
-	loggedInFile = open(currentlyLoggedIn, 'r')
-	loggedIn = loggedInFile.read()
-	loggedInFile.close()
-
-	return loggedIn
-
-def getAccountPassword(account):
-	accountPasswordFile = open(passwordDir + account, 'r')
-	accountPassword = accountPasswordFile.read()
-	accountPasswordFile.close()
-
-	return accountPassword
-
-def login(username):
-	if os.path.exists(currentlyLoggedIn):
-		logout()
-		nowLoggedIn = open(currentlyLoggedIn, 'w')
-		nowLoggedIn.write(username)
-		nowLoggedIn.close()
-
-	else:
-		nowLoggedIn = open(currentlyLoggedIn, 'w')
-		nowLoggedIn.write(username)
-		nowLoggedIn.close()
 
 def Login():
 	if os.path.exists(currentlyLoggedIn):
@@ -138,10 +136,6 @@ def Login():
 			print('There is no account under that username.')
 
 			return 0
-
-def remove(account):
-	shutil.rmtree(accountsDir + account + '/')
-	os.remove(passwordDir + account)
 
 def Remove():
 	admin = False
@@ -230,7 +224,7 @@ def Remove():
 
 		return 0
 
-def changePass():
+def ChangePass():
 	account = input('Username: ')
 	accountPath = accountsDir + account + '/' 
 
@@ -248,5 +242,7 @@ def changePass():
 		print('No account under that username.')
 		
 		return 0
+
+
 
 startup()
