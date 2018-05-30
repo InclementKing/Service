@@ -1,41 +1,14 @@
 import os, shutil
+
 sHome = os.path.expanduser('~/.Service/')
 accountsDir = sHome + 'Users/'
-passwordDir = sHome + 'Passwords/'
 currentlyLoggedIn = sHome + 'loggedIn'
 
 
 def writePassword(account, password):
-	passwordFile = open(passwordDir + account, 'w')
+	passwordFile = open(accountsDir + account + '/password', 'w')
 	passwordFile.write(password)
 	passwordFile.close()
-
-def startup():
-	if os.path.exists(sHome):
-		pass
-
-	else:
-		os.makedirs(passwordDir)
-		os.makedirs(accountsDir + 'admin/')
-
-		writePassword(admin, 'password')
-
-def getCurrentlyLoggedIn():
-	loggedInFile = open(currentlyLoggedIn, 'r')
-	loggedIn = loggedInFile.read()
-	loggedInFile.close()
-
-	return loggedIn
-
-def getAccountPassword(account):
-	accountPasswordFile = open(passwordDir + account, 'r')
-	accountPassword = accountPasswordFile.read()
-	accountPasswordFile.close()
-
-	return accountPassword
-
-def logout():
-	os.remove(currentlyLoggedIn)
 
 def login(username):
 	if os.path.exists(currentlyLoggedIn):
@@ -49,9 +22,34 @@ def login(username):
 		nowLoggedIn.write(username)
 		nowLoggedIn.close()
 
+def startup():
+	if os.path.exists(sHome):
+		pass
+
+	else:
+		os.makedirs(accountsDir + 'admin/')
+		writePassword('admin', 'password')
+		login('admin')
+
+def getCurrentlyLoggedIn():
+	loggedInFile = open(currentlyLoggedIn, 'r')
+	loggedIn = loggedInFile.read()
+	loggedInFile.close()
+
+	return loggedIn
+
+def getAccountPassword(account):
+	accountPasswordFile = open(accountsDir + account + '/password', 'r')
+	accountPassword = accountPasswordFile.read()
+	accountPasswordFile.close()
+
+	return accountPassword
+
+def logout():
+	os.remove(currentlyLoggedIn)
+
 def remove(account):
 	shutil.rmtree(accountsDir + account + '/')
-	os.remove(passwordDir + account)
 
 
 
@@ -152,7 +150,7 @@ def Remove():
 	accountToRemove = input("Enter the name of the account to be removed: ")
 
 	if accountToRemove == 'All':
-		if admin == True:
+		if admin:
 			sure = input('Are you sure you wish to remove all accounts? (y/n) ')
 			if sure:
 				shutil.rmtree(sHome)
@@ -184,6 +182,7 @@ def Remove():
 				remove(accountToRemove)
 				if loggedIn == accountToRemove:
 					logout()
+
 				print('Account successfully removed.')
 
 				return 1
@@ -230,7 +229,6 @@ def ChangePass():
 
 	if os.path.exists(accountPath):
 		newPassword = input('New password: ')
-		os.remove(passwordDir + account)
 
 		writePassword(account, newPassword)
 
@@ -242,6 +240,9 @@ def ChangePass():
 		print('No account under that username.')
 		
 		return 0
+
+
+
 
 
 
